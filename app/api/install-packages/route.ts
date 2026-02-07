@@ -524,13 +524,7 @@ export async function POST(request: NextRequest) {
         createSandboxError(
           ErrorCodes.NO_ACTIVE_SANDBOX,
           'No active sandbox available. Please create a sandbox first.',
-          undefined,
-          {
-            recovery: {
-              action: 'create_sandbox',
-              description: 'Create a new sandbox before installing packages',
-            },
-          }
+          undefined
         ),
         { status: 400 }
       );
