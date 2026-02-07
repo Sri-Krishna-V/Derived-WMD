@@ -228,11 +228,12 @@ print('\\nAll files created successfully!')
     // Execute the setup script
     await sandbox.runCode(setupScript);
     
-    // Install dependencies
+    // Install dependencies with progress tracking
     console.log('[create-ai-sandbox] Installing dependencies...');
-    await sandbox.runCode(`
+    const installResult = await sandbox.runCode(`
 import subprocess
 import sys
+import os
 
 print('Installing npm packages...')
 result = subprocess.run(
@@ -244,10 +245,34 @@ result = subprocess.run(
 
 if result.returncode == 0:
     print('✓ Dependencies installed successfully')
+    
+    # Verify critical dependencies are installed
+    node_modules = '/home/user/app/node_modules'
+    critical_deps = ['react', 'react-dom', 'vite', '@vitejs/plugin-react', 'tailwindcss']
+    missing = []
+    
+    for dep in critical_deps:
+        dep_path = os.path.join(node_modules, dep)
+        if not os.path.exists(dep_path):
+            missing.append(dep)
+    
+    if missing:
+        print(f'⚠ Warning: Missing dependencies: {", ".join(missing)}')
+        sys.exit(1)
+    else:
+        print('✓ All critical dependencies verified')
+        sys.exit(0)
 else:
-    print(f'⚠ Warning: npm install had issues: {result.stderr}')
-    # Continue anyway as it might still work
+    print(f'✗ npm install failed: {result.stderr}')
+    sys.exit(1)
     `);
+    
+    // Check if installation was successful
+    if (installResult.error) {
+      throw new Error(`Dependency installation failed: ${installResult.error}`);
+    }
+    
+    console.log('[create-ai-sandbox] Dependencies installed and verified');
     
     // Start Vite dev server
     console.log('[create-ai-sandbox] Starting Vite dev server...');
@@ -278,6 +303,7 @@ print('Waiting for server to be ready...')
     `);
     
     // Wait for Vite to be fully ready
+    console.log('[create-ai-sandbox] Waiting for Vite to initialize...');
     await new Promise(resolve => setTimeout(resolve, appConfig.e2b.viteStartupDelay));
     
     // Force Tailwind CSS to rebuild by touching the CSS file
@@ -295,6 +321,39 @@ if os.path.exists(css_file):
 time.sleep(2)
 print('✓ Tailwind CSS should be loaded')
     `);
+    
+    // Verify dev server is accessible
+    console.log('[create-ai-sandbox] Verifying dev server accessibility...');
+    const serverUrl = `https://${host}`;
+    let serverReady = false;
+    let attempts = 0;
+    const maxAttempts = 10;
+    
+    while (!serverReady && attempts < maxAttempts) {
+      try {
+        const response = await fetch(serverUrl, {
+          method: 'HEAD',
+          signal: AbortSignal.timeout(5000)
+        });
+        
+        if (response.ok || response.status === 304) {
+          serverReady = true;
+          console.log('[create-ai-sandbox] Dev server is accessible');
+        } else {
+          console.log(`[create-ai-sandbox] Server responded with status ${response.status}, retrying...`);
+          attempts++;
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      } catch (error) {
+        console.log(`[create-ai-sandbox] Server not ready yet (attempt ${attempts + 1}/${maxAttempts}), retrying...`);
+        attempts++;
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+    
+    if (!serverReady) {
+      throw new Error('Dev server failed to become accessible after multiple attempts');
+    }
 
     // Store sandbox globally
     global.activeSandbox = sandbox;
@@ -333,13 +392,39 @@ print('✓ Tailwind CSS should be loaded')
     global.existingFiles.add('tailwind.config.js');
     global.existingFiles.add('postcss.config.js');
     
+    // Requirements: 15.2 - Track sandbox creation in conversation state
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/conversation-state`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'update-sandbox',
+          data: {
+            sandboxId,
+            url: `https://${host}`,
+            modification: {
+              type: 'config_change',
+              description: 'Sandbox created with Vite + React + Tailwind',
+              files: Array.from(global.existingFiles),
+            },
+          },
+        }),
+      });
+    } catch (error) {
+      console.warn('[create-ai-sandbox] Failed to track sandbox in conversation state:', error);
+      // Non-critical, continue
+    }
+    
     console.log('[create-ai-sandbox] Sandbox ready at:', `https://${host}`);
     
     return NextResponse.json({
       success: true,
       sandboxId,
       url: `https://${host}`,
-      message: 'Sandbox created and Vite React app initialized'
+      status: 'ready',
+      message: 'Sandbox created, dependencies installed, and Vite dev server verified'
     });
 
   } catch (error) {

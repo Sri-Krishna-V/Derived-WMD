@@ -40,6 +40,20 @@ export interface ConversationContext {
     commonRequests?: string[]; // Common patterns in user requests
     packagePreferences?: string[]; // Commonly used packages
   };
+  // Requirements: 15.2, 15.6 - Sandbox state persistence
+  sandboxState?: {
+    sandboxId: string | null;
+    url: string | null;
+    createdAt: number;
+    lastModified: number;
+    modifications: Array<{
+      timestamp: number;
+      type: 'file_create' | 'file_update' | 'file_delete' | 'dependency_install' | 'config_change';
+      description: string;
+      files?: string[];
+      packages?: string[];
+    }>;
+  };
 }
 
 export interface ConversationState {

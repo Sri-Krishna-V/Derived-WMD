@@ -181,8 +181,35 @@ function TamboChatInterface() {
 
 export default function TamboDemoPage() {
   const [apiKeyError, setApiKeyError] = useState(false);
+  const [sandboxId, setSandboxId] = useState<string | null>(null);
   
   const apiKey = process.env.NEXT_PUBLIC_TAMBO_API_KEY;
+  
+  // Fetch sandbox ID on mount
+  React.useEffect(() => {
+    const fetchSandboxStatus = async () => {
+      try {
+        const response = await fetch('/api/sandbox-status');
+        const data = await response.json();
+        
+        if (data.success && data.sandboxData?.sandboxId) {
+          setSandboxId(data.sandboxData.sandboxId);
+          console.log('[tambo] Sandbox ID loaded:', data.sandboxData.sandboxId);
+        } else {
+          console.log('[tambo] No active sandbox found');
+        }
+      } catch (error) {
+        console.error('[tambo] Failed to fetch sandbox status:', error);
+      }
+    };
+    
+    fetchSandboxStatus();
+    
+    // Poll for sandbox status every 5 seconds
+    const interval = setInterval(fetchSandboxStatus, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
   
   if (!apiKey) {
     return (
@@ -209,12 +236,25 @@ export default function TamboDemoPage() {
     );
   }
 
+  // Configure MCP servers array with local MCP server
+  // Requirements: 5.6 - MCP Server Configuration
+  const mcpServers = sandboxId ? [
+    {
+      name: 'e2b-sandbox',
+      url: '/api/mcp',
+      headers: {
+        'x-sandbox-id': sandboxId,
+      },
+    },
+  ] : [];
+
   return (
     <TamboProvider
       apiKey={apiKey}
       components={tamboComponents}
       tools={tamboTools}
       contextHelpers={tamboContextHelpers}
+      mcpServers={mcpServers}
     >
       <TamboChatInterface />
     </TamboProvider>
