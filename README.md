@@ -110,8 +110,20 @@ graph TD
         E2B -->|HMR Stream| Preview[Interactable Sandbox Preview]
     end
     
-    classDef agent fill:#7C3AED,stroke:#fff,stroke-width:2px,color:white;
-    class TamboAgent agent;
+    %% Styling
+    classDef user fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff;
+    classDef frontend fill:#3b82f6,stroke:#2563eb,stroke-width:2px,color:#fff;
+    classDef agent fill:#8b5cf6,stroke:#7c3aed,stroke-width:2px,color:#fff;
+    classDef external fill:#f43f5e,stroke:#e11d48,stroke-width:2px,color:#fff;
+    classDef sandbox fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff;
+    classDef ui fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#fff;
+
+    class User user;
+    class Frontend frontend;
+    class TamboAgent,MCP agent;
+    class Firecrawl external;
+    class E2B,Vite,FS sandbox;
+    class BuildStatus,Preview ui;
 ```
 
 ---
@@ -197,6 +209,21 @@ flowchart TD
     %% PHASE 6: DELIVERY
     %% =========================================
     Preview -->|"State-Preserved UI"| User
+
+    %% Styling
+    classDef userNode fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#92400e;
+    classDef agentNode fill:#ede9fe,stroke:#8b5cf6,stroke-width:2px,color:#5b21b6;
+    classDef externalNode fill:#ffe4e6,stroke:#f43f5e,stroke-width:2px,color:#9f1239;
+    classDef mcpNode fill:#e0f2fe,stroke:#0ea5e9,stroke-width:2px,color:#075985;
+    classDef sandboxNode fill:#ecfdf5,stroke:#10b981,stroke-width:2px,color:#065f46;
+    classDef uiNode fill:#ecfeff,stroke:#06b6d4,stroke-width:2px,color:#164e63;
+
+    class User userNode;
+    class Agent agentNode;
+    class Firecrawl externalNode;
+    class MCP mcpNode;
+    class FS,Node,Vite sandboxNode;
+    class BuildStatus,Preview uiNode;
 ```
 
 ---
