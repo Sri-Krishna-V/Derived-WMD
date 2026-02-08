@@ -63,6 +63,11 @@ We integrated **Model Context Protocol (MCP)** support directly into the Tambo p
 
 ---
 
+## Architecture Diagram
+
+![Pipeline](https://github.com/user-attachments/assets/1aa3c20d-3848-485d-8a09-678d4aad1773)
+
+
 ## Tech Stack
 
 **Derived is built on an advanced, modern stack:**
@@ -332,6 +337,14 @@ export const appConfig = {
 
 ---
 
+## Presentation Slides
+
+<img width="1127" height="637" alt="pres1" src="https://github.com/user-attachments/assets/019df048-dd30-43f7-805e-fb6485b6ded4" />
+<img width="1128" height="630" alt="pres2" src="https://github.com/user-attachments/assets/0ed67386-a765-4788-ada1-080409f8ceca" />
+<img width="1134" height="642" alt="pres3" src="https://github.com/user-attachments/assets/b11f6db3-8cb3-4857-abc7-107645849b8d" />
+
+
+
 ## Advanced Use Cases
 
 ### 1. Visual Inheritance & Design Cloning
@@ -409,6 +422,7 @@ We welcome contributions from the community! Whether you're fixing bugs, adding 
 
 [Report Bug](https://github.com/Sri-Krishna-V/Derived-WMD/issues) • [Request Feature](https://github.com/Sri-Krishna-V/Derived-WMD/issues)
 
-Built with ❤️ using Tambo AI
+Built with <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/941f1175-09c6-4dd3-b31a-714ea2e278a4" />
+ using Tambo AI
 
 </div>
