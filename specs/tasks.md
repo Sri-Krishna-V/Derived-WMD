@@ -13,7 +13,7 @@ This implementation plan transforms the "Derived" project from an imperative cod
   - Create `lib/tambo-config.ts` updates for tool registry
   - _Requirements: 1.1, 2.1_
 
-- [ ] 2. Implement generateCode tool
+- [x] 2. Implement generateCode tool
   - [x] 2.1 Create structured API endpoint for code generation
     - Create `/api/apply-ai-code-structured` route that accepts JSON
     - Implement Zod schema validation for input (rationale, files array, dependencies)
@@ -45,27 +45,27 @@ This implementation plan transforms the "Derived" project from an imperative cod
     - Register tool in Tambo configuration
     - _Requirements: 1.1, 1.5, 10.4_
   
-  - [ ]* 2.6 Write property test for transaction atomicity
+  - [x] 2.6 Write property test for transaction atomicity
     - **Property 3: Transaction Atomicity with Rollback**
     - **Validates: Requirements 1.7, 12.1, 12.2, 12.3**
   
-  - [ ]* 2.7 Write property test for tool output structure
+  - [x] 2.7 Write property test for tool output structure
     - **Property 1: Tool Output Structure Consistency**
     - **Validates: Requirements 1.5**
   
-  - [ ]* 2.8 Write property test for input validation
+  - [x] 2.8 Write property test for input validation
     - **Property 2: Input Validation Rejection**
     - **Validates: Requirements 1.6**
   
-  - [ ]* 2.9 Write property test for path validation
+  - [x] 2.9 Write property test for path validation
     - **Property 15: File Path Validation**
     - **Validates: Requirements 12.4, 12.6**
   
-  - [ ]* 2.10 Write property test for file overwrite protection
+  - [x] 2.10 Write property test for file overwrite protection
     - **Property 16: File Overwrite Protection**
     - **Validates: Requirements 12.5**
 
-- [ ] 3. Implement manageSandbox tool
+- [x] 3. Implement manageSandbox tool
   - [x] 3.1 Create sandbox control tool definition
     - Define manageSandbox tool in `lib/tools/sandbox-tools.ts`
     - Implement Zod schema for action enum (start, stop, restart, install_deps)
@@ -84,22 +84,22 @@ This implementation plan transforms the "Derived" project from an imperative cod
     - Provide descriptive metadata for agent selection
     - _Requirements: 10.5_
   
-  - [ ]* 3.4 Write property test for sandbox action responses
+  - [x] 3.4 Write property test for sandbox action responses
     - **Property 4: Sandbox Action Response Structure**
     - **Validates: Requirements 2.4**
   
-  - [ ]* 3.5 Write property test for dependency installation
+  - [x] 3.5 Write property test for dependency installation
     - **Property 17: Dependency Installation Verification**
     - **Validates: Requirements 13.1, 13.3**
   
-  - [ ]* 3.6 Write unit test for sandbox restart recovery
+  - [x] 3.6 Write unit test for sandbox restart recovery
     - Test that restart action works when sandbox is in error state
     - _Requirements: 2.5_
 
 - [x] 4. Checkpoint - Verify tool infrastructure
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 5. Create InteractableSandbox component
+- [x] 5. Create InteractableSandbox component
   - [x] 5.1 Define sandbox state schema
     - Create Zod schema for InteractableSandbox props (viewMode, showConsole, url, status)
     - Define enum types for viewMode and status
@@ -124,16 +124,16 @@ This implementation plan transforms the "Derived" project from an imperative cod
     - Provide component description for agent guidance
     - _Requirements: 10.1, 10.7_
   
-  - [ ]* 5.5 Write property test for state synchronization
+  - [x] 5.5 Write property test for state synchronization
     - **Property 5: Interactable Component State Synchronization**
     - **Validates: Requirements 3.6**
   
-  - [ ]* 5.6 Write unit test for viewport mode changes
+  - [x] 5.6 Write unit test for viewport mode changes
     - Test that viewMode prop correctly adjusts iframe dimensions
     - Test desktop, tablet, and mobile modes
     - _Requirements: 3.2, 3.7_
 
-- [ ] 6. Create BuildStatus component
+- [x] 6. Create BuildStatus component
   - [x] 6.1 Implement BuildStatus component
     - Create component in `components/tambo/BuildStatus.tsx`
     - Accept steps array with id, label, status properties
@@ -155,23 +155,23 @@ This implementation plan transforms the "Derived" project from an imperative cod
     - Provide description for progress visualization
     - _Requirements: 10.2, 10.7_
   
-  - [ ]* 6.4 Write property test for build step progression
+  - [x] 6.4 Write property test for build step progression
     - **Property 6: Build Step Status Progression**
     - **Validates: Requirements 4.6**
   
-  - [ ]* 6.5 Write property test for streaming updates
+  - [x] 6.5 Write property test for streaming updates
     - **Property 9: Streaming Progress Updates**
     - **Validates: Requirements 7.1, 7.2**
   
-  - [ ]* 6.6 Write property test for streaming completion
+  - [x] 6.6 Write property test for streaming completion
     - **Property 10: Streaming Completion Guarantee**
     - **Validates: Requirements 7.4**
   
-  - [ ]* 6.7 Write unit test for error status display
+  - [x] 6.7 Write unit test for error status display
     - Test that errors update step status to 'error' and display logs
     - _Requirements: 4.7_
 
-- [ ] 7. Create AppSpecSheet component
+- [x] 7. Create AppSpecSheet component
   - [x] 7.1 Implement AppSpecSheet form component
     - Create component in `components/tambo/AppSpecSheet.tsx`
     - Add features textarea input
@@ -186,7 +186,7 @@ This implementation plan transforms the "Derived" project from an imperative cod
     - Provide description for requirement gathering
     - _Requirements: 10.3, 10.7_
   
-  - [ ]* 7.3 Write unit tests for form validation
+  - [x] 7.3 Write unit tests for form validation
     - Test that form collects all required fields
     - Test that onSubmit receives correct data structure
     - _Requirements: 6.2_
@@ -194,7 +194,7 @@ This implementation plan transforms the "Derived" project from an imperative cod
 - [x] 8. Checkpoint - Verify component infrastructure
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 9. Implement MCP server
+- [x] 9. Implement MCP server
   - [x] 9.1 Create MCP server endpoint
     - Create `/api/mcp/route.ts` for MCP server
     - Implement POST handler that accepts MCP requests
@@ -235,23 +235,23 @@ This implementation plan transforms the "Derived" project from an imperative cod
     - Include x-sandbox-id header from context
     - _Requirements: 5.6_
   
-  - [ ]* 9.7 Write property test for MCP round-trip consistency
+  - [x] 9.7 Write property test for MCP round-trip consistency
     - **Property 7: MCP Filesystem Round-Trip Consistency**
     - **Validates: Requirements 5.2**
   
-  - [ ]* 9.8 Write property test for directory listing completeness
+  - [x] 9.8 Write property test for directory listing completeness
     - **Property 8: MCP Directory Listing Completeness**
     - **Validates: Requirements 5.3**
   
-  - [ ]* 9.9 Write property test for MCP authorization
+  - [x] 9.9 Write property test for MCP authorization
     - **Property 12: MCP Sandbox Authorization Validation**
     - **Validates: Requirements 9.6**
   
-  - [ ]* 9.10 Write unit test for MCP error when sandbox inactive
+  - [x] 9.10 Write unit test for MCP error when sandbox inactive
     - Test that MCP returns error when sandbox is not active
     - _Requirements: 5.7_
 
-- [ ] 10. Update middleware for conversational patterns
+- [x] 10. Update middleware for conversational patterns
   - [x] 10.1 Adjust rate limiting configuration
     - Update ai_generation tier to 10 requests per minute
     - Update code_application tier to 20 requests per minute
@@ -269,19 +269,19 @@ This implementation plan transforms the "Derived" project from an imperative cod
     - Calculate retry time based on rate limit window
     - _Requirements: 8.5_
   
-  - [ ]* 10.4 Write property test for sequential operations within limits
+  - [x] 10.4 Write property test for sequential operations within limits
     - **Property 11: Sequential Operations Within Rate Limits**
     - **Validates: Requirements 8.4**
   
-  - [ ]* 10.5 Write unit test for rate limit enforcement
+  - [x] 10.5 Write unit test for rate limit enforcement
     - Test that exceeding limits returns 429 with retry-after header
     - _Requirements: 8.5_
   
-  - [ ]* 10.6 Write unit tests for rate limit tiers
+  - [x] 10.6 Write unit tests for rate limit tiers
     - Test each tier (ai_generation, code_application, sandbox) at configured limits
     - _Requirements: 8.1, 8.2, 8.3_
 
-- [ ] 11. Enhance security isolation
+- [x] 11. Enhance security isolation
   - [x] 11.1 Update CSP for E2B sandbox isolation
     - Verify frame-src is restricted to https://*.e2b.app
     - Ensure unsafe-eval is scoped only to sandbox iframe
@@ -293,16 +293,16 @@ This implementation plan transforms the "Derived" project from an imperative cod
     - Add sandbox attribute to iframe for additional isolation
     - _Requirements: 9.1_
   
-  - [ ]* 11.3 Write unit tests for CSP enforcement
+  - [x] 11.3 Write unit tests for CSP enforcement
     - Test that CSP blocks unauthorized frame sources
     - Test that main app cannot execute sandbox code
     - _Requirements: 9.2, 9.3, 9.4_
   
-  - [ ]* 11.4 Write unit test for iframe isolation
+  - [x] 11.4 Write unit test for iframe isolation
     - Test that sandbox cannot access parent window resources
     - _Requirements: 9.5_
 
-- [ ] 12. Implement dependency management features
+- [x] 12. Implement dependency management features
   - [x] 12.1 Add import statement detection
     - Create parser function that extracts import statements from code
     - Distinguish between relative imports (local files) and package imports
@@ -320,19 +320,19 @@ This implementation plan transforms the "Derived" project from an imperative cod
     - Optimize for efficiency when multiple dependencies specified
     - _Requirements: 13.6_
   
-  - [ ]* 12.4 Write property test for import detection
+  - [x] 12.4 Write property test for import detection
     - **Property 18: Import Statement Detection**
     - **Validates: Requirements 13.2**
   
-  - [ ]* 12.5 Write property test for versioned package installation
+  - [x] 12.5 Write property test for versioned package installation
     - **Property 19: Versioned Package Installation**
     - **Validates: Requirements 13.5**
   
-  - [ ]* 12.6 Write unit test for batch installation
+  - [x] 12.6 Write unit test for batch installation
     - Test that multiple packages are installed in single command
     - _Requirements: 13.6_
 
-- [ ] 13. Implement error handling and recovery
+- [x] 13. Implement error handling and recovery
   - [x] 13.1 Standardize error response format
     - Create ErrorResponse type with code, message, details, recovery fields
     - Update all API routes to return structured errors
@@ -356,15 +356,15 @@ This implementation plan transforms the "Derived" project from an imperative cod
     - Parse npm errors for common issues (not found, version conflict)
     - _Requirements: 11.7_
   
-  - [ ]* 13.5 Write property test for structured error reporting
+  - [x] 13.5 Write property test for structured error reporting
     - **Property 13: Structured Error Reporting**
     - **Validates: Requirements 11.1, 11.4, 11.5, 11.7**
   
-  - [ ]* 13.6 Write property test for error state propagation
+  - [x] 13.6 Write property test for error state propagation
     - **Property 14: Error State Propagation**
     - **Validates: Requirements 11.3**
 
-- [ ] 14. Implement project initialization
+- [x] 14. Implement project initialization
   - [x] 14.1 Enhance sandbox scaffolding
     - Verify create-ai-sandbox creates complete Vite + React + Tailwind structure
     - Ensure package.json includes all required dependencies and scripts
@@ -379,7 +379,7 @@ This implementation plan transforms the "Derived" project from an imperative cod
     - Verify dev server is accessible before returning URL
     - _Requirements: 14.5, 14.6, 14.7_
   
-  - [ ]* 14.3 Write unit tests for project initialization
+  - [x] 14.3 Write unit tests for project initialization
     - Test that all required files are created
     - Test that dev server is accessible at returned URL
     - _Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 14.6, 14.7_
@@ -403,15 +403,15 @@ This implementation plan transforms the "Derived" project from an imperative cod
     - Preserve old sandbox ID for potential recovery
     - _Requirements: 15.5_
   
-  - [ ]* 15.4 Write property test for conversation history persistence
+  - [x] 15.4 Write property test for conversation history persistence
     - **Property 20: Conversation History Persistence**
     - **Validates: Requirements 15.1**
   
-  - [ ]* 15.5 Write property test for sandbox state continuity
+  - [x] 15.5 Write property test for sandbox state continuity
     - **Property 21: Sandbox State Continuity**
     - **Validates: Requirements 15.2, 15.6**
   
-  - [ ]* 15.6 Write unit test for context reset
+  - [x] 15.6 Write unit test for context reset
     - Test that starting new project clears old context
     - _Requirements: 15.5_
 
@@ -419,25 +419,25 @@ This implementation plan transforms the "Derived" project from an imperative cod
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 17. Integration testing and validation
-  - [ ] 17.1 Write integration test for complete code generation flow
+  - [x] 17.1 Write integration test for complete code generation flow
     - Test user request → tool selection → code generation → preview update
     - Verify BuildStatus shows progress during generation
     - Verify InteractableSandbox updates with new code
     - _Requirements: 1.1-1.7, 3.6, 4.5, 4.6_
   
-  - [ ]* 17.2 Write integration test for MCP discovery workflow
+  - [x] 17.2 Write integration test for MCP discovery workflow
     - Test list_files → read_file → code modification sequence
     - Verify agent can discover project structure through MCP
     - Verify modifications are applied correctly after discovery
     - _Requirements: 5.2, 5.3, 1.1_
   
-  - [ ]* 17.3 Write integration test for error recovery
+  - [x] 17.3 Write integration test for error recovery
     - Test sandbox crash → error detection → restart → recovery
     - Verify InteractableSandbox shows error state
     - Verify manageSandbox restart action recovers sandbox
     - _Requirements: 2.5, 11.3_
   
-  - [ ]* 17.4 Write integration test for streaming interruption
+  - [x] 17.4 Write integration test for streaming interruption
     - Test streaming operation → interruption → partial state report
     - Verify system handles interruption gracefully
     - _Requirements: 7.5_
