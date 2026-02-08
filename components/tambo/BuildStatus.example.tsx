@@ -1,10 +1,3 @@
-/**
- * Example usage of BuildStatus component
- * 
- * This file demonstrates how the BuildStatus component should be used
- * in the context of code generation workflows.
- */
-
 import { BuildStatus, BuildStep } from './BuildStatus';
 
 // Example 1: Build in progress

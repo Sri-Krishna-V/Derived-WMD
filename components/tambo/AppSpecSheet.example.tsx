@@ -1,10 +1,3 @@
-/**
- * Example usage of AppSpecSheet component
- * 
- * This file demonstrates how to use the AppSpecSheet component
- * for collecting application requirements from users.
- */
-
 import { AppSpecSheet } from './AppSpecSheet';
 
 export default function AppSpecSheetExample() {

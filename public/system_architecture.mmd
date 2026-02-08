@@ -1,163 +1,76 @@
-graph TD
-    User[👤 User/Developer] -->|Natural Language Prompts| UI[Next.js 15 Frontend]
-    
-    subgraph "Frontend Layer - React 19 + Tailwind"
-        UI -->|State Management| ChatState[Chat Messages State]
-        UI -->|Manages| ConversationCtx[Conversation Context]
-        UI -->|Displays| CodeDisplay[Code Syntax Highlighter]
-        UI -->|Renders| FileTree[File Structure Tree]
-        UI -->|Theme| ThemeProvider[Theme Provider - Dark/Light]
-        
-        ConversationCtx -->|Tracks| ScrapedData[Scraped Websites]
-        ConversationCtx -->|Stores| GenComponents[Generated Components]
-        ConversationCtx -->|Maintains| AppliedCode[Applied Code History]
+flowchart TD
+    %% =========================================
+    %% DERIVED: AGENTIC GENERATIVE UI PLATFORM
+    %% =========================================
+
+    %% -------- ACTORS --------
+    User["👤 User / Developer"]
+
+    Agent["🧠 Tambo Agent
+    Autonomous Orchestrator"]
+
+    Firecrawl["🔥 Firecrawl
+    Web Design Scraper"]
+
+    MCP["🔌 MCP Server
+    Model Context Protocol"]
+
+    %% -------- SANDBOX --------
+    subgraph Sandbox["📦 E2B Sandbox (Secure MicroVM)"]
+        FS["🗂 Project Filesystem"]
+        Node["🟢 Node.js Runtime"]
+        Vite["⚡ Vite Dev Server
+        Hot Module Replacement"]
     end
-    
-    UI -->|POST Requests| APILayer[Next.js API Routes Layer]
-    
-    subgraph "API Routes - 20+ Endpoints"
-        APILayer -->|Generate Code| GenAPI[/api/generate-ai-code-stream]
-        APILayer -->|Apply Code| ApplyAPI[/api/apply-ai-code-stream]
-        APILayer -->|Analyze Intent| IntentAPI[/api/analyze-edit-intent]
-        APILayer -->|Classify| ClassifyAPI[/api/classify-intent]
-        APILayer -->|Scrape URL| ScrapeAPI[/api/scrape-url-enhanced]
-        APILayer -->|Screenshot| ScreenshotAPI[/api/scrape-screenshot]
-        APILayer -->|Package Mgmt| PackageAPI[/api/detect-and-install-packages]
-        APILayer -->|Sandbox Mgmt| SandboxAPI[/api/create-ai-sandbox]
-        APILayer -->|Error Check| ErrorAPI[/api/check-vite-errors]
-        APILayer -->|Command Exec| CommandAPI[/api/run-command]
+
+    %% -------- GENERATIVE UI --------
+    subgraph UI["🎨 Generative UI Layer"]
+        BuildStatus["📊 BuildStatus
+        Live Execution Progress"]
+        Preview["🖥 InteractableSandbox
+        Live App Preview"]
     end
-    
-    subgraph "Intelligence Layer"
-        IntentAPI -->|Uses| IntentAnalyzer[Edit Intent Analyzer]
-        IntentAnalyzer -->|50+ Patterns| PatternMatcher[Regex Pattern Matching]
-        IntentAnalyzer -->|Manages| FileManifest[File Manifest System]
-        
-        FileManifest -->|Tracks| EntryPoint[Entry Point: App.tsx]
-        FileManifest -->|Maps| Components[Component Files]
-        FileManifest -->|Indexes| Styles[Style Files]
-        FileManifest -->|Catalogs| Utils[Utility Files]
-        FileManifest -->|Graphs| Relationships[Component Relationships]
-        
-        PatternMatcher -->|Classifies| EditTypes[7 Edit Types]
-        EditTypes -->|Type 1| UpdateStyle[UPDATE_STYLE]
-        EditTypes -->|Type 2| UpdateComp[UPDATE_COMPONENT]
-        EditTypes -->|Type 3| AddFeature[ADD_FEATURE]
-        EditTypes -->|Type 4| FixIssue[FIX_ISSUE]
-        EditTypes -->|Type 5| Refactor[REFACTOR]
-        EditTypes -->|Type 6| FullRebuild[FULL_REBUILD]
-        EditTypes -->|Type 7| AddDep[ADD_DEPENDENCY]
-    end
-    
-    subgraph "AI Orchestration Layer - Vercel AI SDK"
-        GenAPI -->|Streams| AIRouter[Multi-Model Router]
-        AIRouter -->|Context Builder| ContextBuilder[Context Builder]
-        
-        ContextBuilder -->|Includes| FileContext[File Manifest Context]
-        ContextBuilder -->|Includes| ConvHistory[Conversation History]
-        ContextBuilder -->|Includes| IntentContext[Edit Intent Context]
-        ContextBuilder -->|Includes| ErrorContext[Error Context]
-        
-        AIRouter -->|Model 1| Gemini[Google Gemini 2.5 Pro<br/>1M Context Window]
-        AIRouter -->|Model 2| GPT5[OpenAI GPT-5 o1<br/>200K Context]
-        AIRouter -->|Model 3| Claude[Anthropic Claude Sonnet 4<br/>200K Context]
-        AIRouter -->|Model 4| Kimi[Moonshot Kimi K2<br/>200K Context]
-        AIRouter -->|Model 5| Groq[Groq GPT-OSS 120B<br/>32K Context - Fastest]
-        
-        Gemini -->|Streams SSE| AIResponse[Streamed Response]
-        GPT5 -->|Streams SSE| AIResponse
-        Claude -->|Streams SSE| AIResponse
-        Kimi -->|Streams SSE| AIResponse
-        Groq -->|Streams SSE| AIResponse
-    end
-    
-    subgraph "Code Application Layer"
-        ApplyAPI -->|Parses| CodeParser[Code Parser]
-        CodeParser -->|Extracts| FileBlocks[File Blocks]
-        FileBlocks -->|Validates| Validator[Code Validator]
-        Validator -->|Writes| FileWriter[File Writer]
-        
-        FileWriter -->|Checks| DependencyDetector[Dependency Detector]
-        DependencyDetector -->|Scans| ImportScanner[Import Statement Scanner]
-        ImportScanner -->|Detects Missing| MissingPackages[Missing Packages List]
-        MissingPackages -->|Triggers| AutoInstaller[Auto NPM Installer]
-    end
-    
-    subgraph "Web Scraping Layer"
-        ScrapeAPI -->|Fetches| URLFetcher[URL Content Fetcher]
-        ScreenshotAPI -->|Captures| ScreenshotEngine[Screenshot Engine]
-        
-        URLFetcher -->|Extracts| HTMLParser[HTML/CSS Parser]
-        HTMLParser -->|Analyzes| StructureAnalyzer[Structure Analyzer]
-        StructureAnalyzer -->|Outputs| ScrapedContent[Scraped Content + Metadata]
-        
-        ScreenshotEngine -->|Returns| VisualPreview[Base64 Screenshot]
-    end
-    
-    subgraph "Execution Environment - E2B Code Interpreter"
-        FileWriter -->|Writes Files| E2B[E2B Sandbox Instance]
-        AutoInstaller -->|Installs Packages| E2B
-        CommandAPI -->|Executes Commands| E2B
-        
-        E2B -->|Manages| VFS[Virtual File System]
-        E2B -->|Runs| ViteServer[Vite Dev Server :5173]
-        E2B -->|Monitors| ProcessMonitor[Process Monitor]
-        E2B -->|Provides| ShellAccess[Interactive Shell]
-        
-        ViteServer -->|Hot Module Replacement| HMR[HMR System]
-        ViteServer -->|Serves| StaticAssets[Static Assets]
-        ViteServer -->|Compiles| ReactApp[React Application]
-        
-        ProcessMonitor -->|Detects| ViteErrors[Vite Build Errors]
-        ViteErrors -->|Reports| ErrorDetector[HMR Error Detector]
-        ErrorDetector -->|Categorizes| ErrorTypes[Error Types]
-        
-        ErrorTypes -->|Type 1| PackageErrors[Package Not Found]
-        ErrorTypes -->|Type 2| SyntaxErrors[Syntax Errors]
-        ErrorTypes -->|Type 3| ImportErrors[Import Errors]
-        ErrorTypes -->|Type 4| RuntimeErrors[Runtime Errors]
-        
-        PackageErrors -->|Triggers| DependencyDetector
-    end
-    
-    subgraph "Preview Layer"
-        UI -->|Embeds| PreviewIframe[Live Preview Iframe]
-        PreviewIframe -->|HTTPS Request| ViteServer
-        ViteServer -->|Responds| LivePreview[Rendered Application]
-        
-        HMR -->|Updates| PreviewIframe
-        ErrorDetector -->|Displays| ErrorOverlay[Error Overlay Component]
-    end
-    
-    subgraph "State Persistence Layer"
-        SandboxAPI -->|Creates| SandboxPool[Sandbox Pool Manager]
-        SandboxPool -->|Stores| ActiveSandboxes[Active Sandboxes Map]
-        ActiveSandboxes -->|15min TTL| TimeoutManager[Timeout Manager]
-        TimeoutManager -->|Cleanup| SandboxDestroy[Sandbox Destruction]
-        
-        ConversationCtx -->|Persists| StateAPI[/api/conversation-state]
-        StateAPI -->|Serializes| SessionData[Session Data]
-    end
-    
-    subgraph "Configuration Layer"
-        APILayer -.->|Reads| AppConfig[app.config.ts]
-        AppConfig -.->|Defines| E2BConfig[E2B Settings]
-        AppConfig -.->|Defines| AIConfig[AI Model Settings]
-        AppConfig -.->|Defines| CodeAppConfig[Code Application Settings]
-        AppConfig -.->|Defines| UIConfig[UI Settings]
-    end
-    
-    %% Styling
-    classDef userClass fill:#4CAF50,stroke:#2E7D32,color:#fff
-    classDef frontendClass fill:#2196F3,stroke:#1565C0,color:#fff
-    classDef apiClass fill:#FF9800,stroke:#E65100,color:#fff
-    classDef aiClass fill:#9C27B0,stroke:#6A1B9A,color:#fff
-    classDef executionClass fill:#F44336,stroke:#C62828,color:#fff
-    classDef intelligenceClass fill:#00BCD4,stroke:#00838F,color:#fff
-    
-    class User userClass
-    class UI,ChatState,ConversationCtx,CodeDisplay,FileTree,ThemeProvider frontendClass
-    class APILayer,GenAPI,ApplyAPI,IntentAPI,ClassifyAPI,ScrapeAPI,ScreenshotAPI,PackageAPI,SandboxAPI,ErrorAPI,CommandAPI apiClass
-    class AIRouter,Gemini,GPT5,Claude,Kimi,Groq,ContextBuilder aiClass
-    class E2B,ViteServer,VFS,ProcessMonitor,ShellAccess,HMR executionClass
-    class IntentAnalyzer,PatternMatcher,FileManifest,EditTypes intelligenceClass
+
+    %% =========================================
+    %% PHASE 1: USER INPUT
+    %% =========================================
+    User -->|"Natural Language Prompt"| Agent
+
+    %% =========================================
+    %% PHASE 2: CONTEXT INJECTION (OPTIONAL)
+    %% =========================================
+    Agent -->|"URL Detected"| Firecrawl
+    Firecrawl -->|"Design Manifest (Markdown)"| Agent
+
+    %% =========================================
+    %% PHASE 3: DISCOVERY & GROUNDING
+    %% =========================================
+    Agent -->|"list_files"| MCP
+    MCP -->|"Query Filesystem"| FS
+    FS -->|"File Tree"| MCP
+    MCP -->|"Project Structure"| Agent
+
+    Agent -->|"read_file (targeted)"| MCP
+    MCP -->|"Read File"| FS
+    FS -->|"File Contents"| MCP
+    MCP -->|"Source Code"| Agent
+
+    %% =========================================
+    %% PHASE 4: EXECUTION
+    %% =========================================
+    Agent -->|"generateCode / installPackages"| Sandbox
+    Sandbox --> Node
+    Node --> FS
+
+    %% =========================================
+    %% PHASE 5: GENERATIVE FEEDBACK
+    %% =========================================
+    Agent -->|"Execution Steps"| BuildStatus
+
+    FS -->|"File Changes"| Vite
+    Vite -->|"HMR Update"| Preview
+
+    %% =========================================
+    %% PHASE 6: DELIVERY
+    %% =========================================
+    Preview -->|"State-Preserved UI"| User

@@ -1,10 +1,3 @@
-/**
- * Tambo Demo Chat Interface
- * 
- * This page demonstrates the integration of Tambo AI for generative UI.
- * It showcases how components can be dynamically rendered based on user conversations.
- */
-
 'use client';
 
 import React, { useState } from 'react';
