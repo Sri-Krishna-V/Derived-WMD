@@ -7,11 +7,11 @@ const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
 // Different limits for different endpoint types
 const RATE_LIMITS = {
   // AI-heavy endpoints (most expensive)
-  ai_generation: { limit: 3, window: RATE_LIMIT_WINDOW },
+  ai_generation: { limit: 10, window: RATE_LIMIT_WINDOW },
   // Code application endpoints
-  code_application: { limit: 5, window: RATE_LIMIT_WINDOW },
+  code_application: { limit: 20, window: RATE_LIMIT_WINDOW },
   // Sandbox management
-  sandbox: { limit: 8, window: RATE_LIMIT_WINDOW },
+  sandbox: { limit: 5, window: RATE_LIMIT_WINDOW },
   // Status checks and light endpoints
   status: { limit: 20, window: RATE_LIMIT_WINDOW },
   // Default for other API routes
@@ -108,6 +108,18 @@ setInterval(() => {
 export function middleware(request: NextRequest) {
   // Apply rate limiting to API routes
   if (request.nextUrl.pathname.startsWith('/api/')) {
+    // Detect WebSocket upgrade requests
+    const upgrade = request.headers.get('upgrade')?.toLowerCase();
+    const connection = request.headers.get('connection')?.toLowerCase();
+    const isWebSocketUpgrade = upgrade === 'websocket' || (connection?.includes('upgrade') ?? false);
+    
+    // Exempt WebSocket connections from HTTP rate limiting
+    // Only exempt known WebSocket endpoints to prevent header spoofing
+    const isMcpPath = request.nextUrl.pathname.startsWith('/api/mcp');
+    if (isMcpPath && isWebSocketUpgrade) {
+      return NextResponse.next();
+    }
+    
     const key = getRateLimitKey(request);
     const tier = getEndpointTier(request.nextUrl.pathname);
     const { allowed, remaining, limit } = checkRateLimit(key, tier);
@@ -158,16 +170,19 @@ export function middleware(request: NextRequest) {
   );
   
   // Content Security Policy
+  // Note: unsafe-eval is NOT included in the main application CSP for security.
+  // The E2B sandbox iframe (from e2b.dev domain) has its own CSP headers
+  // that allow what it needs. This ensures sandbox code cannot execute in the main app.
   response.headers.set(
     'Content-Security-Policy',
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-eval' 'unsafe-inline'", // unsafe-eval needed for sandboxes
+      "script-src 'self' 'unsafe-inline'", // unsafe-inline needed for Next.js, NO unsafe-eval for security
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https: blob:",
       "font-src 'self' data:",
-      "connect-src 'self' https://*.e2b.app https://*.firecrawl.dev https://*.anthropic.com https://*.openai.com https://*.googleapis.com https://*.groq.com https://*.tambo.co wss://*.e2b.app",
-      "frame-src 'self' https://*.e2b.app",
+      "connect-src 'self' https://*.e2b.app https://*.e2b.dev https://*.firecrawl.dev https://*.anthropic.com https://*.openai.com https://*.googleapis.com https://*.groq.com https://*.tambo.co wss://*.e2b.app wss://*.e2b.dev",
+      "frame-src 'self' https://*.e2b.app https://*.e2b.dev", // Restricted to E2B domains only
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
