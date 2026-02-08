@@ -11,7 +11,7 @@
 [![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
 [![Tambo-Powered](https://img.shields.io/badge/Agentic-Tambo_AI-purple?style=for-the-badge)](https://tambo.ai)
 
-[Features](#-core-features) • [Architecture](#-architecture) • [Getting Started](#-getting-started) • [Tambo Integration](#-how-we-used-tambo-in-derived)
+[About](#about-the-project) • [Tech Stack](#tech-stack) • [Architecture](#system-architecture) • [Getting Started](#getting-started) • [Tambo Integration](#how-we-used-tambo-in-derived)
 
 <br/>
 
@@ -21,13 +21,13 @@
 
 ---
 
-## 🎯 About the Project
+## About the Project
 
 **Derived** is an AI-first **Agentic Development Environment** that transforms natural language into live React applications. Unlike traditional "text-to-code" tools which operate in a vacuum, Derived employs an autonomous **Tambo Agent** that actively explores, understands, and modifies your codebase in real-time.
 
 By combining **Generative UI**, the **Model Context Protocol (MCP)**, and a secure **E2B Sandboxed Runtime**, Derived bridges the gap between high-level ideas and execution. It manages the entire application lifecycle—from cloning designs with Firecrawl to implementing complex features on top of existing codebases—autonomously installing packages, fixing build errors, and rendering interactive progress components directly in your chat stream.
 
-### 🌟 Key Transformations
+### Key Transformations
 
 - **Imperative to Declarative**: No more manual file clicks. Describe your intent, and the Agent orchestrates the tools.
 - **Blind to Grounded**: The Agent uses **MCP** to scan your project files before writing a single line of code, virtually eliminating hallucinations.
@@ -35,7 +35,7 @@ By combining **Generative UI**, the **Model Context Protocol (MCP)**, and a secu
 
 ---
 
-## 🤖 How We Used Tambo in Derived
+## How We Used Tambo in Derived
 
 Derived is a "Generative UI first" application. We used the **Tambo SDK** to transform the interface from a passive chat stream into an active, AI-orchestrated workspace.
 
@@ -63,7 +63,7 @@ We integrated **Model Context Protocol (MCP)** support directly into the Tambo p
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 **Derived is built on an advanced, modern stack:**
 
@@ -88,7 +88,7 @@ We integrated **Model Context Protocol (MCP)** support directly into the Tambo p
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 Derived follows a **Declarative-Intent** architecture. The interface adapts based on the Agent's selection of tools and components.
 
@@ -129,7 +129,7 @@ graph TB
 
 ---
 
-## 🔄 Lifecycle: From Intent to Delivery
+## Lifecycle: From Intent to Delivery
 
 This flow illustrates the **Agentic Loop** for editing and feature implementation:
 
@@ -229,7 +229,7 @@ flowchart TD
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -279,7 +279,7 @@ flowchart TD
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```text
 app/                 # Next.js App Router routes
@@ -298,7 +298,7 @@ types/               # TypeScript definitions
 
 ---
 
-## 🔧 Configurations
+## Configurations
 
 Customize behavior in `config/tambo-config.ts` and `app.config.ts`.
 
@@ -321,7 +321,7 @@ export const appConfig = {
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 | Issue | Solution |
 | :--- | :--- |
@@ -332,7 +332,7 @@ export const appConfig = {
 
 ---
 
-## 🌟 Advanced Use Cases
+## Advanced Use Cases
 
 ### 1. Visual Inheritance & Design Cloning
 
@@ -385,7 +385,7 @@ export const appConfig = {
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions from the community! Whether you're fixing bugs, adding new Tambo tools, or improving the documentation, your help is appreciated.
 
