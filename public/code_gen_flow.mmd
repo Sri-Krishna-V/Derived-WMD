@@ -1,0 +1,24 @@
+sequenceDiagram
+    participant User
+    participant Frontend
+    participant API
+    participant AI
+    participant Sandbox
+    
+    User->>Frontend: "Create a login form"
+    Frontend->>API: POST /api/generate-ai-code
+    API->>AI: Generate Code Prompt
+    AI-->>API: Stream React Code
+    API-->>Frontend: Stream Response (SSE)
+    Frontend->>Frontend: Display Code
+    Frontend->>API: POST /api/apply-ai-code
+    API->>Sandbox: Write File (Login.tsx)
+    Sandbox-->>API: File Written
+    API->>Sandbox: Check Dependencies
+    alt Missing Dependencies
+        API->>Sandbox: npm install
+        Sandbox-->>API: Install Complete
+    end
+    API-->>Frontend: Success
+    Frontend->>Sandbox: Refresh Vite Dev Server
+    Sandbox-->>Frontend: Render New Component
