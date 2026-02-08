@@ -6,7 +6,7 @@
 
 **From natural language to production-ready React apps in seconds.**
 
-[![Version](https://img.shields.io/badge/version-0.2.0-blue.svg?style=for-the-badge)](https://github.com/Sri-Krishna-V/Derived-WMD)
+[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg?style=for-the-badge)](https://github.com/Sri-Krishna-V/Derived-WMD)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge)](LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
 [![Tambo-Powered](https://img.shields.io/badge/Agentic-Tambo_AI-purple?style=for-the-badge)](https://tambo.ai)
@@ -19,43 +19,43 @@
 
 ## 🎯 About the Project
 
-**Derived** (derived-wmd) is an AI-first **Agentic Development Environment** that goes beyond simple code generation. Unlike traditional "text-to-code" tools which guess blindly, Derived employs an autonomous **Tambo Agent** that actively explores, understands, and modifies your codebase in real-time.
+**Derived** is an AI-first **Agentic Development Environment** that transforms natural language into live, production-ready React applications. Unlike traditional "text-to-code" tools which operate in a vacuum, Derived employs an autonomous **Tambo Agent** that actively explores, understands, and modifies your codebase in real-time.
 
-By combining **Generative UI**, the **Model Context Protocol (MCP)**, and a secure **E2B Sandboxed Runtime**, Derived bridges the gap between natural language ideas and production-ready React applications. It manages the entire lifecycle—from cloning designs to implementing complex features on top of existing codebases—installing packages, fixing errors, monitoring builds, and rendering interactive progress components directly in the chat stream.
+By combining **Generative UI**, the **Model Context Protocol (MCP)**, and a secure **E2B Sandboxed Runtime**, Derived bridges the gap between high-level ideas and execution. It manages the entire application lifecycle—from cloning designs with Firecrawl to implementing complex features on top of existing codebases—autonomously installing packages, fixing build errors, and rendering interactive progress components directly in your chat stream.
 
-The platform excels at:
+### 🌟 Key Transformations
 
-- **Zero-Shot App Creation**: "Build a CRM dashboard" → Full app in 60s.
-- **Visual Cloning**: "Clone this landing page" → Firecrawl scrapes & recreates it.
-- **Iterative Refinement**: "Make the header dark" → Surgical edits to existing files.
-- **Self-Healing Builds**: Automatically detects errors and installs missing NPM packages.
+- **Imperative to Declarative**: No more manual file clicks. Describe your intent, and the Agent orchestrates the tools.
+- **Blind to Grounded**: The Agent uses **MCP** to scan your project files before writing a single line of code, virtually eliminating hallucinations.
+- **Static to Interactable**: The UI isn't just a preview; it's an **Interactable Sandbox** where the Agent can switch viewports, toggle consoles, and navigate routes on your behalf.
 
 ---
 
 ## 🤖 How We Used Tambo in Derived
 
-We didn't just want a chatbot; we wanted an Agentic IDE. We used **Tambo** to transform our interface from a passive text stream into an active, Generative UI surface.
+Derived is a "Generative UI first" application. We used the **Tambo SDK** to transform the interface from a passive chat stream into an active, AI-orchestrated workspace.
 
-### 1. As the Agentic Orchestrator (The Brain)
+### 1. As the Agentic Orchestrator (The Tools)
 
-Instead of hardcoding APIs, the **Tambo Agent** autonomously decides which tools to call.
+We registered high-level **Tambo Tools** that the Agent can autonomously select and invoke:
 
-- **What it does:** When you say "Build a dashboard," the Agent analyzes intent and orchestrates a multi-step workflow on its own—scanning files, installing dependencies, and generating code—without brittle `if/else` logic.
+- **`generateCode`**: A structured tool with Zod validation for atomic file operations. It supports transaction rollbacks—if one file fails, the whole change reverts.
+- **`manageSandbox`**: Allows the Agent to start, stop, or restart the E2B microVM and install NPM dependencies based on build logs.
 
-### 2. For "Generative UI" Feedback (The Visuals)
+### 2. For Generative UI Feedback (The Components)
 
-Tambo renders **React Components** inside the chat stream, replacing spinners with rich context.
+Tambo renders rich **React Components** inside the chat stream, providing real-time visibility into the Agent's thought process:
 
-- **`BuildStatus` Component:** When `generateCode` runs, Tambo renders a live progress card showing logs (e.g., *"Installing framer-motion..."*).
-- **`InteractableSandbox` Component:** The live website preview isn't a static iframe; it's a dynamic UI artifact the Agent *chooses* to render upon success.
+- **`BuildStatus`**: A live progress card showing exactly what the Agent is doing (e.g., *"Installing framer-motion..."*, *"Scaffolding Vite..."*).
+- **`AppSpecSheet`**: An interactive requirements form that the Agent renders for novice users to gather specs before starting a build.
+- **`InteractableSandbox`**: A live preview component that the Agent *controls*. It can respond to "Show me mobile view" by updating its internal state.
 
-### 3. To Bridge the Sandbox (The Connector)
+### 3. To Bridge the Discovery Gap (MCP)
 
-Tambo connects the **Vercel AI SDK** to our **E2B Sandbox**. We registered custom tools (like `manageSandbox`) within Tambo configuration, ensuring secure execution of atomic file operations in the microVM.
+We integrated **Model Context Protocol (MCP)** support directly into the Tambo provider.
 
-### 4. For Interactive Requirements
-
-Using `tambo-ai/react`, we built an **`AppSpecSheet`**. If a prompt is vague ("Make an app"), the Agent renders an interactive form *in chat* to gather specs (Colors? Tech stack?) before writing code.
+- **What it solves:** Usually, AI "guesses" what files you have.
+- **How it works:** Our local MCP server exposes the E2B filesystem. The Agent uses `list_files` and `read_file` tools via MCP to "see" your code before proposing changes.
 
 ---
 
@@ -86,49 +86,46 @@ Using `tambo-ai/react`, we built an **`AppSpecSheet`**. If a prompt is vague ("M
 
 ## 🏗️ System Architecture
 
-The system is built on four distinct pillars:
+Derived follows a **Declarative-Intent** architecture. The interface adapts based on the Agent's selection of tools and components.
 
 ```mermaid
-graph TD
-    User[👤 Developer] -->|Natural Language| Frontend[Next.js + Tambo UI]
+graph TB
+    User[👤 Developer] -->|Natural Language| Agent[🧠 Tambo Agent]
     
-    subgraph "🧠 Intelligence Layer (The Brain)"
-        Frontend -->|Agent Context| TamboAgent[Tambo Agent Orchestrator]
-        TamboAgent -->|Discovery| MCP[MCP Server Bridge]
-        TamboAgent -->|Cloning| Firecrawl[Firecrawl Scraper]
+    subgraph "🛠️ Tool Registry"
+        Agent -->|Invoke| GC[generateCode]
+        Agent -->|Invoke| MS[manageSandbox]
     end
     
-    subgraph "📦 Execution Layer (The Engine)"
-        TamboAgent -.->|Tool Calls| E2B[E2B Sandbox]
-        E2B -->|Hosts| Vite[Vite Dev Server]
-        E2B -->|Manages| FS[Virtual File System]
-        MCP -->|Reads| FS
+    subgraph "🔌 Discovery (MCP)"
+        Agent -->|Query| MCPServer[MCP Server Bridge]
+        MCPServer -->|Read/List| FS[E2B Filesystem]
+    end
+    
+    subgraph "🎨 Generative UI (Tambo)"
+        Agent -->|Render| BS[BuildStatus]
+        Agent -->|Render| AS[AppSpecSheet]
+        Agent -->|Sync State| IS[InteractableSandbox]
+    end
+    
+    subgraph "📦 Infrastructure"
+        GC -->|Apply| FS
+        MS -->|Control| Node[Node.js Runtime]
+        FS -->|HMR| IS
     end
 
-    subgraph "🎨 Generative UI Layer (The Output)"
-        TamboAgent -->|Renders| BuildStatus[Build Progress Card]
-        E2B -->|HMR Stream| Preview[Interactable Sandbox Preview]
-    end
+    classDef agent fill:#7c3aed,stroke:#5b21b6,stroke-width:2px,color:#fff;
+    classDef tool fill:#059669,stroke:#047857,stroke-width:2px,color:#fff;
+    classDef mcp fill:#0ea5e9,stroke:#0369a1,stroke-width:2px,color:#fff;
     
-    %% Styling
-    classDef user fill:#f59e0b,stroke:#d97706,stroke-width:2px,color:#fff;
-    classDef frontend fill:#3b82f6,stroke:#2563eb,stroke-width:2px,color:#fff;
-    classDef agent fill:#8b5cf6,stroke:#7c3aed,stroke-width:2px,color:#fff;
-    classDef external fill:#f43f5e,stroke:#e11d48,stroke-width:2px,color:#fff;
-    classDef sandbox fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff;
-    classDef ui fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#fff;
-
-    class User user;
-    class Frontend frontend;
-    class TamboAgent,MCP agent;
-    class Firecrawl external;
-    class E2B,Vite,FS sandbox;
-    class BuildStatus,Preview ui;
+    class Agent agent;
+    class GC,MS tool;
+    class MCPServer mcp;
 ```
 
 ---
 
-## 🔄 Project Flow Diagram
+## 🔄 Lifecycle: From Intent to Delivery
 
 This flow illustrates the **Agentic Loop** for editing and feature implementation:
 
@@ -233,7 +230,12 @@ flowchart TD
 ### Prerequisites
 
 - **Node.js** 18+
-- API Keys for: **E2B**, **Firecrawl** (optional), and one LLM (**Google/OpenAI/Anthropic**).
+- **pnpm** (preferred) or npm
+- API Keys for:
+  - **E2B_API_KEY**: [e2b.dev](https://e2b.dev)
+  - **NEXT_PUBLIC_TAMBO_API_KEY**: [console.tambo.co](https://console.tambo.co)
+  - **FIRECRAWL_API_KEY**: (Optional) For design cloning
+  - **LLM Keys**: (Anthropic, Google, or OpenAI)
 
 ### Installation
 
@@ -251,14 +253,15 @@ flowchart TD
    ```
 
 3. **Configure Environment**:
-   Create `.env.local`:
+   Create a `.env.local` file:
 
    ```env
    # Required
    E2B_API_KEY=e2b_...
+   NEXT_PUBLIC_TAMBO_API_KEY=your_tambo_key
    GOOGLE_GENERATIVE_AI_API_KEY=AIza...
    
-   # Optional (for full features)
+   # Optional
    FIRECRAWL_API_KEY=fc_...
    ANTHROPIC_API_KEY=sk-ant...
    OPENAI_API_KEY=sk-...
@@ -270,7 +273,24 @@ flowchart TD
    pnpm dev
    ```
 
-   Open `http://localhost:3000` to start building.
+---
+
+## 📁 Project Structure
+
+```text
+app/                 # Next.js App Router routes
+  api/               # API endpoints (Sandbox, Scraping, MCP)
+  components/        # Main layout components (Theme, Logo)
+  tambo/             # Tambo Generative UI chat interface
+components/          # Shared UI components
+  tambo/             # AI-renderable components (BuildStatus, AppSpecSheet)
+  ui/                # Base Radix+Tailwind components
+lib/                 # Core logic and utilities
+  tools/             # Tambo Tool definitions (generateCode, manageSandbox)
+  tambo-config.ts    # Central registry for Tambo tools/components
+specs/               # Design and requirement specifications
+types/               # TypeScript definitions
+```
 
 ---
 
@@ -302,38 +322,83 @@ export const appConfig = {
 | Issue | Solution |
 | :--- | :--- |
 | **"Vite server not ready"** | The sandbox takes ~10s to boot. Wait for the `BuildStatus` card to show green. |
-| **"Hallucinated Files"** | If the Agent tries to edit non-existent files, try asking it to "List files first". |
-| **Preview 404** | If the preview is blank, type "Restart server" to force a Vite reboot. |
-| **Package Errors** | The Agent usually auto-fixes these. If not, type "Run npm install" explicitly. |
+| **"Hallucinated Files"** | The Agent uses **MCP** to avoid this. If it persists, ask "List files again". |
+| **Preview 404** | If the preview is blank, ask the Agent to "Restart sandbox". |
+| **Package Errors** | The Agent auto-detects missing packages and installs them via `manageSandbox`. |
 
 ---
 
-## 🌟 Advanced Features & Use Cases
+## 🌟 Advanced Use Cases
 
-### 1. "Clone & Build" (Firecrawl)
+### 1. Visual Inheritance & Design Cloning
 
-**Scenario:** You like a design on Dribbble or a live site.
-**Command:** *"Clone the design of stripe.com/pricing"*
-**Process:** Firecrawl scrapes the visual structure -> Agent converts to Tailwind -> Renders clone in Sandbox.
+**Scenario:** *"I love the layout of the Linear homepage. Rebuild the hero section using my brand's primary color (#7C3AED)."*
 
-### 2. "Spec-to-App" (Interactive Forms)
+- **The Agentic Loop:**
+  1. **Scraping:** Agent uses **Firecrawl** to extract the semantic structure and CSS patterns of the target URL.
+  2. **Visual Grounding:** Agent optionally takes a **Screenshot** of the site to verify spatial relationships and typography.
+  3. **Translation:** Analyzes the Markdown/Screenshot context and generates high-fidelity Tailwind code.
+  4. **Deployment:** Provisions an E2B sandbox and renders the result in the **InteractableSandbox** for immediate feedback.
 
-**Scenario:** You have a vague idea.
-**Command:** *"I want a fitness app."*
-**Process:** Agent realizes input is vague -> Renders `AppSpecSheet` -> User fills details -> Agent builds precisely.
+### 2. Interactive Requirements Gathering (Adaptive UI)
 
-### 3. Agentic Refactoring
+**Scenario:** *"Build me a project management app."*
 
-**Scenario:** Moving from CSS to Tailwind.
-**Command:** *"Refactor all CSS files to use Tailwind classes."*
-**Process:** Agent loops through all files via MCP, reads content, rewrites code, and deletes old CSS files autonomously.
+- **The Agentic Loop:**
+  1. **Intent Analysis:** Agent detects the request is high-level/vague.
+  2. **Guidance:** Instead of guessing, it renders the **`AppSpecSheet`** component directly in the chat.
+  3. **Collaboration:** The user selects features (Kanban, Analytics, Auth) and design styles via the UI.
+  4. **Execution:** The Agent reads the submitted props from the interactable component and scaffolds the entire project structure based on those specific guardrails.
+
+### 3. Deep Architectural Refactoring
+
+**Scenario:** *"Refactor all functional components in the `components/` folder to use the new Compound Component pattern we just discussed."*
+
+- **The Agentic Loop:**
+  1. **Discovery:** Agent uses **MCP** (`list_files`) to map the entire directory structure.
+  2. **Contextual Reading:** Systematically reads each file using MCP (`read_file`) to understand dependencies.
+  3. **Surgical Edits:** Uses the **`generateCode`** tool to apply multi-file updates, ensuring that imports and exports remain consistent across the codebase.
+  4. **Verification:** Monitors the Vite build process in the background. If a refactor breaks a type, the Agent catches the error and self-corrects.
+
+### 4. Autonomous Troubleshooting (Self-Healing)
+
+**Scenario:** *"The preview is blank, can you fix it?"*
+
+- **The Agentic Loop:**
+  1. **Diagnostics:** Agent invokes `monitor-vite-logs` to read the runtime output from the sandbox.
+  2. **Error Isolation:** Identifies a missing peer dependency (e.g., `framer-motion` version mismatch) or a syntax error.
+  3. **Remediation:** Autonomously calls **`manageSandbox`** with the `install_deps` action or uses **`generateCode`** to fix the syntax.
+  4. **Recovery:** Restarts the Vite server and verifies the `InteractableSandbox` status returns to `active`.
+
+### 5. Seamless Project Export
+
+**Scenario:** *"I'm happy with the dashboard. Give me the code so I can deploy it."*
+
+- **The Agentic Loop:**
+  1. **Consistency Check:** Agent runs a final validation via MCP to ensure all requested features are implemented and the build is stable.
+  2. **Packaging:** Invokes the `create-zip` orchestration layer to bundle the entire project filesystem (stripping unnecessary build artifacts).
+  3. **Handover:** Provides a downloadable ZIP of the production-ready React application, fully compatible with Vercel, Netlify, or self-hosting.
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Whether you're fixing bugs, adding new Tambo tools, or improving the documentation, your help is appreciated.
+
+1. **Fork** the repository.
+2. **Create** a new branch (`git checkout -b feature/amazing-feature`).
+3. **Commit** your changes (`git commit -m 'Add some amazing feature'`).
+4. **Push** to the branch (`git push origin feature/amazing-feature`).
+5. **Open** a Pull Request.
 
 ---
 
 <div align="center">
 
-**Built with ❤️ using Tambo AI**
+**Derived** is an experimental platform built for *The UI Strikes Back* hackathon.
 
 [Report Bug](https://github.com/Sri-Krishna-V/Derived-WMD/issues) • [Request Feature](https://github.com/Sri-Krishna-V/Derived-WMD/issues)
+
+Built with ❤️ using Tambo AI
 
 </div>
