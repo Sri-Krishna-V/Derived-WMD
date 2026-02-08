@@ -67,7 +67,6 @@ We integrated **Model Context Protocol (MCP)** support directly into the Tambo p
 
 ![Pipeline](https://github.com/user-attachments/assets/1aa3c20d-3848-485d-8a09-678d4aad1773)
 
-
 ## Tech Stack
 
 **Derived is built on an advanced, modern stack:**
@@ -134,103 +133,18 @@ graph TB
 
 ---
 
-## Lifecycle: From Intent to Delivery
+## Demo Video
 
-This flow illustrates the **Agentic Loop** for editing and feature implementation:
+<video width="100%" controls>
+  <source src="public/demo_video.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
 
-```mermaid
-flowchart TD
-    %% =========================================
-    %% DERIVED: AGENTIC GENERATIVE UI PLATFORM
-    %% =========================================
+## Presentation Slides
 
-    %% -------- ACTORS --------
-    User["👤 User / Developer"]
-
-    Agent["🧠 Tambo Agent
-    Autonomous Orchestrator"]
-
-    Firecrawl["🔥 Firecrawl
-    Web Design Scraper"]
-
-    MCP["🔌 MCP Server
-    Model Context Protocol"]
-
-    %% -------- SANDBOX --------
-    subgraph Sandbox["📦 E2B Sandbox (Secure MicroVM)"]
-        FS["🗂 Project Filesystem"]
-        Node["🟢 Node.js Runtime"]
-        Vite["⚡ Vite Dev Server
-        Hot Module Replacement"]
-    end
-
-    %% -------- GENERATIVE UI --------
-    subgraph UI["🎨 Generative UI Layer"]
-        BuildStatus["📊 BuildStatus
-        Live Execution Progress"]
-        Preview["🖥 InteractableSandbox
-        Live App Preview"]
-    end
-
-    %% =========================================
-    %% PHASE 1: USER INPUT
-    %% =========================================
-    User -->|"Natural Language Prompt"| Agent
-
-    %% =========================================
-    %% PHASE 2: CONTEXT INJECTION (OPTIONAL)
-    %% =========================================
-    Agent -->|"URL Detected"| Firecrawl
-    Firecrawl -->|"Design Manifest (Markdown)"| Agent
-
-    %% =========================================
-    %% PHASE 3: DISCOVERY & GROUNDING
-    %% =========================================
-    Agent -->|"list_files"| MCP
-    MCP -->|"Query Filesystem"| FS
-    FS -->|"File Tree"| MCP
-    MCP -->|"Project Structure"| Agent
-
-    Agent -->|"read_file (targeted)"| MCP
-    MCP -->|"Read File"| FS
-    FS -->|"File Contents"| MCP
-    MCP -->|"Source Code"| Agent
-
-    %% =========================================
-    %% PHASE 4: EXECUTION
-    %% =========================================
-    Agent -->|"generateCode / installPackages"| Sandbox
-    Sandbox --> Node
-    Node --> FS
-
-    %% =========================================
-    %% PHASE 5: GENERATIVE FEEDBACK
-    %% =========================================
-    Agent -->|"Execution Steps"| BuildStatus
-
-    FS -->|"File Changes"| Vite
-    Vite -->|"HMR Update"| Preview
-
-    %% =========================================
-    %% PHASE 6: DELIVERY
-    %% =========================================
-    Preview -->|"State-Preserved UI"| User
-
-    %% Styling
-    classDef userNode fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#92400e;
-    classDef agentNode fill:#ede9fe,stroke:#8b5cf6,stroke-width:2px,color:#5b21b6;
-    classDef externalNode fill:#ffe4e6,stroke:#f43f5e,stroke-width:2px,color:#9f1239;
-    classDef mcpNode fill:#e0f2fe,stroke:#0ea5e9,stroke-width:2px,color:#075985;
-    classDef sandboxNode fill:#ecfdf5,stroke:#10b981,stroke-width:2px,color:#065f46;
-    classDef uiNode fill:#ecfeff,stroke:#06b6d4,stroke-width:2px,color:#164e63;
-
-    class User userNode;
-    class Agent agentNode;
-    class Firecrawl externalNode;
-    class MCP mcpNode;
-    class FS,Node,Vite sandboxNode;
-    class BuildStatus,Preview uiNode;
-```
+<img width="1127" height="637" alt="pres1" src="https://github.com/user-attachments/assets/019df048-dd30-43f7-805e-fb6485b6ded4" />
+<img width="1128" height="630" alt="pres2" src="https://github.com/user-attachments/assets/0ed67386-a765-4788-ada1-080409f8ceca" />
+<img width="1134" height="642" alt="pres3" src="https://github.com/user-attachments/assets/b11f6db3-8cb3-4857-abc7-107645849b8d" />
 
 ---
 
@@ -337,14 +251,6 @@ export const appConfig = {
 
 ---
 
-## Presentation Slides
-
-<img width="1127" height="637" alt="pres1" src="https://github.com/user-attachments/assets/019df048-dd30-43f7-805e-fb6485b6ded4" />
-<img width="1128" height="630" alt="pres2" src="https://github.com/user-attachments/assets/0ed67386-a765-4788-ada1-080409f8ceca" />
-<img width="1134" height="642" alt="pres3" src="https://github.com/user-attachments/assets/b11f6db3-8cb3-4857-abc7-107645849b8d" />
-
-
-
 ## Advanced Use Cases
 
 ### 1. Visual Inheritance & Design Cloning
@@ -413,10 +319,11 @@ We welcome contributions from the community! Whether you're fixing bugs, adding 
 <div>
 
 ## Devs
+
 1) [Sri Krishna Vundavalli](https://github.com/Sri-Krishna-V/)
 2) [Keerthivasan S V](https://github.com/Keerthivasan-Venkitajalam)
 3) [Kavinesh](https://github.com/Kavinesh11)
-5) [Sai Nivedh](https://github.com/SaiNivedh26)
+4) [Sai Nivedh](https://github.com/SaiNivedh26)
 
 **Derived** is an experimental platform built for *The UI Strikes Back* hackathon.
 
