@@ -397,7 +397,13 @@ We welcome contributions from the community! Whether you're fixing bugs, adding 
 
 ---
 
-<div align="center">
+<div>
+
+## Devs
+1) [Sri Krishna Vundavalli](https://github.com/Sri-Krishna-V/)
+2) [Keerthivasan Venkitachalam](https://github.com/Keerthivasan-Venkitajalam)
+3) [Kavinesh](https://github.com/Kavinesh11)
+5) [Sai Nivedh](https://github.com/SaiNivedh26)
 
 **Derived** is an experimental platform built for *The UI Strikes Back* hackathon.
 
