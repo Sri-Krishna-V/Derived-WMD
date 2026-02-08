@@ -401,7 +401,7 @@ We welcome contributions from the community! Whether you're fixing bugs, adding 
 
 ## Devs
 1) [Sri Krishna Vundavalli](https://github.com/Sri-Krishna-V/)
-2) [Keerthivasan Venkitachalam](https://github.com/Keerthivasan-Venkitajalam)
+2) [Keerthivasan S V](https://github.com/Keerthivasan-Venkitajalam)
 3) [Kavinesh](https://github.com/Kavinesh11)
 5) [Sai Nivedh](https://github.com/SaiNivedh26)
 
