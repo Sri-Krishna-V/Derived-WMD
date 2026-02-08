@@ -322,37 +322,44 @@ time.sleep(2)
 print('✓ Tailwind CSS should be loaded')
     `);
     
-    // Verify dev server is accessible
+    // Verify dev server is accessible (best-effort check from inside sandbox)
     console.log('[create-ai-sandbox] Verifying dev server accessibility...');
-    const serverUrl = `https://${host}`;
     let serverReady = false;
     let attempts = 0;
-    const maxAttempts = 10;
+    const maxAttempts = 5;
     
     while (!serverReady && attempts < maxAttempts) {
       try {
-        const response = await fetch(serverUrl, {
-          method: 'HEAD',
-          signal: AbortSignal.timeout(5000)
-        });
+        // Check from inside the sandbox instead of external fetch
+        const checkResult = await sandbox.runCode(`
+import subprocess
+import time
+
+# Check if Vite is listening on port 5173
+result = subprocess.run(['curl', '-s', '-o', '/dev/null', '-w', '%{http_code}', 'http://localhost:5173'], 
+                       capture_output=True, text=True, timeout=5)
+print(result.stdout)
+`, { timeout: 10000 });
         
-        if (response.ok || response.status === 304) {
+        const statusCode = checkResult.logs.trim();
+        if (statusCode === '200' || statusCode === '304') {
           serverReady = true;
           console.log('[create-ai-sandbox] Dev server is accessible');
         } else {
-          console.log(`[create-ai-sandbox] Server responded with status ${response.status}, retrying...`);
+          console.log(`[create-ai-sandbox] Server check returned ${statusCode}, retrying...`);
           attempts++;
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 2000));
         }
       } catch (error) {
         console.log(`[create-ai-sandbox] Server not ready yet (attempt ${attempts + 1}/${maxAttempts}), retrying...`);
         attempts++;
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
       }
     }
     
     if (!serverReady) {
-      throw new Error('Dev server failed to become accessible after multiple attempts');
+      console.warn('[create-ai-sandbox] Dev server verification failed, but continuing (may be accessible from browser)');
+      // Don't hard-fail - the server might be accessible from the browser even if not from our check
     }
 
     // Store sandbox globally
@@ -394,23 +401,15 @@ print('✓ Tailwind CSS should be loaded')
     
     // Requirements: 15.2 - Track sandbox creation in conversation state
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/conversation-state`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const { updateSandbox } = await import('@/lib/server/conversation-state');
+      updateSandbox({
+        sandboxId,
+        url: `https://${host}`,
+        modification: {
+          type: 'config_change',
+          description: 'Sandbox created with Vite + React + Tailwind',
+          files: Array.from(global.existingFiles),
         },
-        body: JSON.stringify({
-          action: 'update-sandbox',
-          data: {
-            sandboxId,
-            url: `https://${host}`,
-            modification: {
-              type: 'config_change',
-              description: 'Sandbox created with Vite + React + Tailwind',
-              files: Array.from(global.existingFiles),
-            },
-          },
-        }),
       });
     } catch (error) {
       console.warn('[create-ai-sandbox] Failed to track sandbox in conversation state:', error);

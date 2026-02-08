@@ -187,6 +187,9 @@ export default function TamboDemoPage() {
   
   // Fetch sandbox ID on mount
   React.useEffect(() => {
+    let attempts = 0;
+    const maxAttempts = 12; // Stop after 1 minute (12 * 5s)
+    
     const fetchSandboxStatus = async () => {
       try {
         const response = await fetch('/api/sandbox-status');
@@ -195,18 +198,34 @@ export default function TamboDemoPage() {
         if (data.success && data.sandboxData?.sandboxId) {
           setSandboxId(data.sandboxData.sandboxId);
           console.log('[tambo] Sandbox ID loaded:', data.sandboxData.sandboxId);
+          return true; // Signal success
         } else {
           console.log('[tambo] No active sandbox found');
+          return false;
         }
       } catch (error) {
         console.error('[tambo] Failed to fetch sandbox status:', error);
+        return false;
       }
     };
     
+    // Initial fetch
     fetchSandboxStatus();
     
-    // Poll for sandbox status every 5 seconds
-    const interval = setInterval(fetchSandboxStatus, 5000);
+    // Poll for sandbox status with exponential backoff
+    const interval = setInterval(async () => {
+      attempts++;
+      
+      const success = await fetchSandboxStatus();
+      
+      // Stop polling if sandbox found or max attempts reached
+      if (success || attempts >= maxAttempts) {
+        clearInterval(interval);
+        if (attempts >= maxAttempts) {
+          console.log('[tambo] Stopped polling after max attempts');
+        }
+      }
+    }, 5000);
     
     return () => clearInterval(interval);
   }, []);

@@ -100,6 +100,7 @@ This tool allows you to control the sandbox where generated code executes. You c
           }
           requestBody = { 
             packages: input.packages,
+            sandboxId: input.sandboxId, // Forward sandboxId if provided
             stream: false  // Use non-streaming mode for structured JSON response
           };
           break;

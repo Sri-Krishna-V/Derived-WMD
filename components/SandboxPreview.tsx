@@ -27,6 +27,8 @@ interface SandboxPreviewProps {
   url?: string;
   status?: SandboxStatus;
   errorDetails?: SandboxErrorDetails;
+  // Callback for view mode changes
+  onViewModeChange?: (mode: ViewMode) => void;
 }
 
 export default function SandboxPreview({ 
@@ -36,15 +38,30 @@ export default function SandboxPreview({
   output,
   isLoading = false,
   // New interactable props with defaults
-  viewMode = 'desktop',
+  viewMode: viewModeProp = 'desktop',
   showConsole: showConsoleProp,
   url: urlProp,
   status = 'active',
   errorDetails,
+  onViewModeChange,
 }: SandboxPreviewProps) {
   const [previewUrl, setPreviewUrl] = useState<string>('');
   const [showConsole, setShowConsole] = useState(showConsoleProp ?? false);
   const [iframeKey, setIframeKey] = useState(0);
+  // Internal state for viewMode when not controlled
+  const [internalViewMode, setInternalViewMode] = useState<ViewMode>(viewModeProp);
+  
+  // Use controlled viewMode if provided, otherwise use internal state
+  const viewMode = viewModeProp || internalViewMode;
+  
+  // Handle view mode change
+  const handleViewModeChange = (mode: ViewMode) => {
+    if (onViewModeChange) {
+      onViewModeChange(mode);
+    } else {
+      setInternalViewMode(mode);
+    }
+  };
 
   // Sync showConsole with prop when it changes
   useEffect(() => {
@@ -124,6 +141,15 @@ export default function SandboxPreview({
     );
   }
 
+  // Guard against empty preview URL
+  if (!previewUrl) {
+    return (
+      <div className="p-6 text-sm text-gray-400 text-center bg-gray-800 rounded-lg border border-gray-700">
+        No preview available yet.
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       {/* Preview Controls */}
@@ -141,7 +167,7 @@ export default function SandboxPreview({
           {/* View Mode Selector */}
           <div className="flex items-center gap-1 bg-gray-900 rounded p-1">
             <button
-              onClick={() => {/* viewMode is controlled by parent */}}
+              onClick={() => handleViewModeChange('desktop')}
               className={`px-2 py-1 text-xs rounded transition-colors ${
                 viewMode === 'desktop' 
                   ? 'bg-blue-600 text-white' 
@@ -152,7 +178,7 @@ export default function SandboxPreview({
               Desktop
             </button>
             <button
-              onClick={() => {/* viewMode is controlled by parent */}}
+              onClick={() => handleViewModeChange('tablet')}
               className={`px-2 py-1 text-xs rounded transition-colors ${
                 viewMode === 'tablet' 
                   ? 'bg-blue-600 text-white' 
@@ -163,7 +189,7 @@ export default function SandboxPreview({
               Tablet
             </button>
             <button
-              onClick={() => {/* viewMode is controlled by parent */}}
+              onClick={() => handleViewModeChange('mobile')}
               className={`px-2 py-1 text-xs rounded transition-colors ${
                 viewMode === 'mobile' 
                   ? 'bg-blue-600 text-white' 
@@ -238,7 +264,14 @@ export default function SandboxPreview({
                               <div key={key} className="text-xs">
                                 <span className="text-gray-500">{key}:</span>{' '}
                                 <span className="text-gray-300 font-mono">
-                                  {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                                  {typeof value === 'object' ? (() => {
+                                    try {
+                                      const str = JSON.stringify(value);
+                                      return str.length > 200 ? str.substring(0, 200) + '...' : str;
+                                    } catch {
+                                      return '[Complex Object]';
+                                    }
+                                  })() : String(value).substring(0, 200)}
                                 </span>
                               </div>
                             ))}

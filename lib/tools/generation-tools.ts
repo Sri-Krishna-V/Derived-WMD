@@ -133,37 +133,53 @@ This tool allows you to create, update, or delete files in the active sandbox wi
         // Decode the chunk and add to buffer
         buffer += decoder.decode(value, { stream: true });
         
-        // Process complete messages (separated by \n\n)
-        const messages = buffer.split('\n\n');
-        buffer = messages.pop() || ''; // Keep incomplete message in buffer
+        // Process complete SSE events (properly handle multi-line data)
+        const lines = buffer.split('\n');
+        let currentEvent = '';
         
-        for (const message of messages) {
-          if (!message.trim() || !message.startsWith('data: ')) {
-            continue;
-          }
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
           
-          try {
-            const data = JSON.parse(message.substring(6)); // Remove 'data: ' prefix
-            
-            // Yield progress updates
-            if (data.type === 'log') {
-              yield { type: 'log', message: data.message };
-            } else if (data.type === 'step') {
-              yield { 
-                type: 'step', 
-                step: data.step, 
-                status: data.status, 
-                message: data.message 
-              };
-            } else if (data.type === 'error') {
-              yield { type: 'error', message: data.message };
-            } else if (data.type === 'final') {
-              // Store final result to return
-              finalResult = data.result;
+          // Empty line signals end of event
+          if (line.trim() === '') {
+            if (currentEvent) {
+              try {
+                // Extract data from SSE format
+                const dataLines = currentEvent.split('\n')
+                  .filter(l => l.startsWith('data: '))
+                  .map(l => l.substring(6));
+                
+                if (dataLines.length > 0) {
+                  const data = JSON.parse(dataLines.join('\n'));
+                  
+                  // Yield progress updates
+                  if (data.type === 'log') {
+                    yield { type: 'log', message: data.message };
+                  } else if (data.type === 'step') {
+                    yield { type: 'step', step: data.step, status: data.status, message: data.message };
+                  } else if (data.type === 'error') {
+                    yield { type: 'error', message: data.message };
+                  } else if (data.type === 'final') {
+                    // Store final result to return
+                    finalResult = data.result;
+                  }
+                }
+              } catch (parseError) {
+                console.error('[generateCodeTool] Error parsing SSE event:', parseError);
+              }
+              currentEvent = '';
             }
-          } catch (parseError) {
-            console.error('[generateCodeTool] Error parsing stream message:', parseError);
+          } else {
+            // Accumulate lines for current event
+            currentEvent += (currentEvent ? '\n' : '') + line;
           }
+        }
+        
+        // Keep incomplete event in buffer
+        if (currentEvent && !buffer.endsWith('\n\n')) {
+          buffer = currentEvent;
+        } else {
+          buffer = '';
         }
       }
       

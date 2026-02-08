@@ -109,17 +109,15 @@ export function middleware(request: NextRequest) {
   // Apply rate limiting to API routes
   if (request.nextUrl.pathname.startsWith('/api/')) {
     // Detect WebSocket upgrade requests
-    const isWebSocketUpgrade = 
-      request.headers.get('upgrade')?.toLowerCase() === 'websocket' ||
-      request.headers.get('connection')?.toLowerCase().includes('upgrade');
+    const upgrade = request.headers.get('upgrade')?.toLowerCase();
+    const connection = request.headers.get('connection')?.toLowerCase();
+    const isWebSocketUpgrade = upgrade === 'websocket' || (connection?.includes('upgrade') ?? false);
     
     // Exempt WebSocket connections from HTTP rate limiting
-    // WebSocket connections are used for MCP and streaming operations
-    if (isWebSocketUpgrade) {
-      const response = NextResponse.next();
-      // Add WebSocket-specific headers if needed
-      response.headers.set('X-WebSocket-Exempt', 'true');
-      return response;
+    // Only exempt known WebSocket endpoints to prevent header spoofing
+    const isMcpPath = request.nextUrl.pathname.startsWith('/api/mcp');
+    if (isMcpPath && isWebSocketUpgrade) {
+      return NextResponse.next();
     }
     
     const key = getRateLimitKey(request);

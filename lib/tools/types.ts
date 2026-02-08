@@ -55,6 +55,7 @@ export type GenerateCodeOutput = z.infer<typeof GenerateCodeOutputSchema>;
 export const ManageSandboxInputSchema = z.object({
   action: z.enum(['start', 'stop', 'restart', 'install_deps']).describe('Sandbox lifecycle action to perform'),
   packages: z.array(z.string()).optional().describe('NPM packages to install (required if action is "install_deps")'),
+  sandboxId: z.string().optional().describe('Optional sandbox ID to reconnect to existing sandbox (useful after server restart)'),
 });
 
 export type ManageSandboxInput = z.infer<typeof ManageSandboxInputSchema>;
@@ -77,15 +78,9 @@ export type ManageSandboxOutput = z.infer<typeof ManageSandboxOutputSchema>;
 
 /**
  * Schema for InteractableSandbox component props
+ * Note: This is re-exported from the component to maintain single source of truth
  */
-export const InteractableSandboxPropsSchema = z.object({
-  viewMode: z.enum(['desktop', 'tablet', 'mobile']).describe('Current viewport configuration'),
-  showConsole: z.boolean().describe('Visibility of the terminal overlay'),
-  url: z.string().describe('The current route being previewed inside the iframe'),
-  status: z.enum(['active', 'building', 'error', 'stopped']).describe('The health status of the sandbox'),
-});
-
-export type InteractableSandboxProps = z.infer<typeof InteractableSandboxPropsSchema>;
+export { InteractableSandboxPropsSchema, type InteractableSandboxProps } from '../../components/tambo/InteractableSandbox';
 
 /**
  * Schema for BuildStatus component props
@@ -109,15 +104,11 @@ export type BuildStatusProps = z.infer<typeof BuildStatusPropsSchema>;
 /**
  * Schema for AppSpecSheet component props
  */
+// Note: onSubmit callback is handled internally by the component, not exposed to AI
 export const AppSpecSheetPropsSchema = z.object({
   features: z.string().optional().describe('Features the user wants in their app (comma-separated or free text)'),
   designSystem: z.enum(['tailwind', 'material', 'chakra', 'custom']).optional().describe('Design system to use'),
   complexity: z.enum(['simple', 'moderate', 'complex']).optional().describe('Complexity level of the application'),
-  onSubmit: z.function().args(z.object({
-    features: z.string(),
-    designSystem: z.enum(['tailwind', 'material', 'chakra', 'custom']),
-    complexity: z.enum(['simple', 'moderate', 'complex']),
-  })).returns(z.void()).describe('Callback function when form is submitted'),
 });
 
 export type AppSpecSheetProps = z.infer<typeof AppSpecSheetPropsSchema>;

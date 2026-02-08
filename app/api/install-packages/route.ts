@@ -191,18 +191,20 @@ except Exception as e:
       });
     }
     
-    // Install packages in a single batch command for efficiency (Requirement 13.6)
+    // Install packages - try normal install first, retry with --legacy-peer-deps on ERESOLVE errors
     console.log('[install-packages-sync] Installing:', packagesToInstall);
-    const installResult = await sandbox.runCode(`
+    
+    // First attempt: normal npm install
+    let installResult = await sandbox.runCode(`
 import subprocess
 import os
 import json
 
 os.chdir('/home/user/app')
 
-# Run npm install with output capture
+# Run npm install with output capture (normal mode first)
 packages_to_install = ${JSON.stringify(packagesToInstall)}
-cmd_args = ['npm', 'install', '--legacy-peer-deps'] + packages_to_install
+cmd_args = ['npm', 'install'] + packages_to_install
 
 print(f"Running command: {' '.join(cmd_args)}")
 
@@ -221,14 +223,16 @@ print("STDOUT:", stdout)
 if stderr:
     print("STDERR:", stderr)
 
-# Capture full npm error output for error reporting (Requirement 11.7)
+# Check if we need to retry with --legacy-peer-deps
+needs_legacy = 'ERESOLVE' in stderr or 'peer dep' in stderr.lower()
+
 print(f"NPM_OUTPUT_START")
 print(stdout)
 print(f"NPM_OUTPUT_END")
 print(f"NPM_ERROR_START")
 print(stderr)
 print(f"NPM_ERROR_END")
-
+print(f"NEEDS_LEGACY:{needs_legacy}")
 print(f"Installation completed with code: {rc}")
 
 # Verify packages were installed by checking node_modules and versions
@@ -285,12 +289,13 @@ for pkg in packages_to_install:
 print(f"INSTALL_RESULT:{json.dumps({'installed': installed, 'failed': failed, 'returnCode': rc})}")
     `, { timeout: 60000 }); // 60 second timeout
     
-    // Parse installation result and capture npm error output (Requirement 11.7)
+    // Parse installation result
     let installed: string[] = [];
     let failed: string[] = [];
     let returnCode = 1;
     let npmOutput = '';
     let npmError = '';
+    let needsLegacy = false;
     
     if (installResult && installResult.results && installResult.results[0] && installResult.results[0].text) {
       const outputLines = installResult.results[0].text.split('\n');
@@ -298,41 +303,156 @@ print(f"INSTALL_RESULT:{json.dumps({'installed': installed, 'failed': failed, 'r
       let captureError = false;
       
       for (const line of outputLines) {
-        // Capture npm stdout
-        if (line.startsWith('NPM_OUTPUT_START')) {
+        if (line.includes('NEEDS_LEGACY:')) {
+          needsLegacy = line.includes('True');
+        }
+        if (line.includes('NPM_OUTPUT_START')) {
           captureOutput = true;
           continue;
         }
-        if (line.startsWith('NPM_OUTPUT_END')) {
+        if (line.includes('NPM_OUTPUT_END')) {
           captureOutput = false;
+          continue;
+        }
+        if (line.includes('NPM_ERROR_START')) {
+          captureError = true;
+          continue;
+        }
+        if (line.includes('NPM_ERROR_END')) {
+          captureError = false;
           continue;
         }
         if (captureOutput) {
           npmOutput += line + '\n';
         }
-        
-        // Capture npm stderr
-        if (line.startsWith('NPM_ERROR_START')) {
-          captureError = true;
-          continue;
-        }
-        if (line.startsWith('NPM_ERROR_END')) {
-          captureError = false;
-          continue;
-        }
         if (captureError) {
           npmError += line + '\n';
         }
-        
-        // Parse install result
         if (line.startsWith('INSTALL_RESULT:')) {
-          try {
+          const result = JSON.parse(line.substring('INSTALL_RESULT:'.length));
+          installed = result.installed || [];
+          failed = result.failed || [];
+        }
+      }
+    }
+    
+    // Retry with --legacy-peer-deps if needed
+    if (needsLegacy && failed.length > 0) {
+      console.log('[install-packages-sync] Retrying with --legacy-peer-deps due to peer dependency conflicts');
+      
+      installResult = await sandbox.runCode(`
+import subprocess
+import os
+import json
+
+os.chdir('/home/user/app')
+
+# Retry with --legacy-peer-deps
+packages_to_install = ${JSON.stringify(packagesToInstall)}
+cmd_args = ['npm', 'install', '--legacy-peer-deps'] + packages_to_install
+
+print(f"Running command (retry): {' '.join(cmd_args)}")
+
+process = subprocess.Popen(
+    cmd_args,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.PIPE,
+    text=True
+)
+
+stdout, stderr = process.communicate()
+rc = process.returncode
+
+print("STDOUT:", stdout)
+if stderr:
+    print("STDERR:", stderr)
+
+print(f"NPM_OUTPUT_START")
+print(stdout)
+print(f"NPM_OUTPUT_END")
+print(f"NPM_ERROR_START")
+print(stderr)
+print(f"NPM_ERROR_END")
+print(f"Retry completed with code: {rc}")
+
+# Re-verify packages
+installed = []
+failed = []
+
+for pkg in packages_to_install:
+    if pkg.startswith('@'):
+        parts = pkg.split('@')
+        if len(parts) >= 3:
+            pkg_name = '@' + parts[1]
+            requested_version = parts[2] if len(parts) > 2 else None
+        else:
+            pkg_name = pkg
+            requested_version = None
+    else:
+        parts = pkg.split('@')
+        pkg_name = parts[0]
+        requested_version = parts[1] if len(parts) > 1 else None
+    
+    node_modules_path = f'/home/user/app/node_modules/{pkg_name}'
+    if os.path.exists(node_modules_path):
+        if requested_version:
+            try:
+                package_json_path = f'{node_modules_path}/package.json'
+                with open(package_json_path, 'r') as f:
+                    pkg_json = json.load(f)
+                    installed_version = pkg_json.get('version', '')
+                    if installed_version == requested_version:
+                        installed.append(pkg)
+                        print(f"✓ Verified {pkg} with version {installed_version}")
+                    else:
+                        failed.append(pkg)
+            except Exception as e:
+                failed.append(pkg)
+        else:
+            installed.append(pkg)
+            print(f"✓ Verified {pkg} in node_modules")
+    else:
+        failed.append(pkg)
+
+print(f"INSTALL_RESULT:{json.dumps({'installed': installed, 'failed': failed, 'returnCode': rc})}")
+      `, { timeout: 60000 });
+      
+      // Re-parse results from retry
+      if (installResult && installResult.results && installResult.results[0] && installResult.results[0].text) {
+        const outputLines = installResult.results[0].text.split('\n');
+        npmOutput = '';
+        npmError = '';
+        let captureOutput = false;
+        let captureError = false;
+        
+        for (const line of outputLines) {
+          if (line.includes('NPM_OUTPUT_START')) {
+            captureOutput = true;
+            continue;
+          }
+          if (line.includes('NPM_OUTPUT_END')) {
+            captureOutput = false;
+            continue;
+          }
+          if (line.includes('NPM_ERROR_START')) {
+            captureError = true;
+            continue;
+          }
+          if (line.includes('NPM_ERROR_END')) {
+            captureError = false;
+            continue;
+          }
+          if (captureOutput) {
+            npmOutput += line + '\n';
+          }
+          if (captureError) {
+            npmError += line + '\n';
+          }
+          if (line.startsWith('INSTALL_RESULT:')) {
             const result = JSON.parse(line.substring('INSTALL_RESULT:'.length));
             installed = result.installed || [];
             failed = result.failed || [];
             returnCode = result.returnCode || 0;
-          } catch (e) {
-            console.error('Failed to parse install result:', e);
           }
         }
       }
@@ -434,21 +554,13 @@ time.sleep(2)
     // Requirements: 15.2, 15.6 - Track dependency installations in sandbox state
     if (installedPackages && installedPackages.length > 0) {
       try {
-        await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/conversation-state`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        const { updateSandbox } = await import('@/lib/server/conversation-state');
+        updateSandbox({
+          modification: {
+            type: 'dependency_install',
+            description: `Installed ${installedPackages.length} package(s)`,
+            packages: installedPackages,
           },
-          body: JSON.stringify({
-            action: 'update-sandbox',
-            data: {
-              modification: {
-                type: 'dependency_install',
-                description: `Installed ${installedPackages.length} package(s)`,
-                packages: installedPackages,
-              },
-            },
-          }),
         });
       } catch (trackError) {
         console.warn('[install-packages-sync] Failed to track dependency installation:', trackError);

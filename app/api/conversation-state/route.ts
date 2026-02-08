@@ -159,6 +159,14 @@ export async function POST(request: NextRequest) {
         global.conversationState.context.messages.push(message);
         global.conversationState.lastUpdated = Date.now();
         
+        // Prevent unbounded memory growth - keep last 100 messages
+        const MAX_MESSAGES = 100;
+        if (global.conversationState.context.messages.length > MAX_MESSAGES) {
+          global.conversationState.context.messages = 
+            global.conversationState.context.messages.slice(-MAX_MESSAGES);
+          console.log('[conversation-state] Trimmed messages to last', MAX_MESSAGES);
+        }
+        
         console.log('[conversation-state] Added message:', message.id, message.role);
         
         return NextResponse.json({
