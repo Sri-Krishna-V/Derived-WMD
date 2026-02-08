@@ -138,10 +138,21 @@ graph TB
 
 ## Demo Video
 
-<video width="100%" controls>
-  <source src="public/demo_video.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<p align="center">
+  <a href="https://youtu.be/riZ86vkI_60">
+    <img
+      src="https://img.youtube.com/vi/riZ86vkI_60/maxresdefault.jpg"
+      alt="Watch the Derived-WMD demo video"
+      width="800"
+    />
+  </a>
+</p>
+
+<p align="center">
+  <em>Click the thumbnail above to watch the full project demo on YouTube.</em>
+</p>
+
+
 
 ## Presentation Slides
 
