@@ -1,10 +1,10 @@
 <div align="center">
 
-# 🚀 Derived
+# Derived
 
 ### The Agentic Generative UI Platform
 
-**From natural language to production-ready React apps in seconds.**
+**From natural language to React apps in seconds.**
 
 [![Version](https://img.shields.io/badge/version-0.1.0-blue.svg?style=for-the-badge)](https://github.com/Sri-Krishna-V/Derived-WMD)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge)](LICENSE)
@@ -13,13 +13,17 @@
 
 [Features](#-core-features) • [Architecture](#-architecture) • [Getting Started](#-getting-started) • [Tambo Integration](#-how-we-used-tambo-in-derived)
 
+<br/>
+
+![Derived Homepage](public/homepage.png)
+
 </div>
 
 ---
 
 ## 🎯 About the Project
 
-**Derived** is an AI-first **Agentic Development Environment** that transforms natural language into live, production-ready React applications. Unlike traditional "text-to-code" tools which operate in a vacuum, Derived employs an autonomous **Tambo Agent** that actively explores, understands, and modifies your codebase in real-time.
+**Derived** is an AI-first **Agentic Development Environment** that transforms natural language into live React applications. Unlike traditional "text-to-code" tools which operate in a vacuum, Derived employs an autonomous **Tambo Agent** that actively explores, understands, and modifies your codebase in real-time.
 
 By combining **Generative UI**, the **Model Context Protocol (MCP)**, and a secure **E2B Sandboxed Runtime**, Derived bridges the gap between high-level ideas and execution. It manages the entire application lifecycle—from cloning designs with Firecrawl to implementing complex features on top of existing codebases—autonomously installing packages, fixing build errors, and rendering interactive progress components directly in your chat stream.
 
